@@ -18,7 +18,7 @@ module.exports.run = async (bot, message, args) => {
 		.setDescription('Ça dégage')
 		.setColor('#E56B00')
 		.addField('Utilisateur dégagé', kMember)
-		.addField('Par', message.author.id)
+		.addField('Par', message.author)
 		.addField('Dans le salon', message.channel)
 		.addField('À', message.createdAt)
 		.addField('Raison', kReason);
