@@ -47,4 +47,4 @@ bot.on('message', message => {
 
 });
 
-bot.login(tokenfile.token);
+bot.login(tokenfile.botToken);

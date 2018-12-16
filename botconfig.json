@@ -1,4 +1,3 @@
 {
-  "prefix": "!",
-  "giphyApiKey": "" // Create an App on https://developers.giphy.com/docs/
+  "prefix": "!"
 }

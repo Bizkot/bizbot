@@ -1,17 +1,23 @@
 const Discord = require('discord.js');
 const superagent = require('superagent');
-const botconfig = require('../botconfig.json');
-// botconfig.giphyApiKey;
-module.exports.run = async (bot, message) => {
+const tokenFile = require('../token.json');
 
-	if (!args[0] || args[0].length == 0) return message.channel.send('missing gif tag : !gif tag')
+module.exports.run = async (bot, message, args) => {
+
+	if (!args[0] || args[0].length == 0) {
+		return message.channel.send('Il faut préciser un tag!');
+	}
 	let {body} = await superagent
-		.get('http://api.giphy.com/v1/gifs/random?api_key=' + botconfig.giphyApiKey+ '&tag=' + args[0]);
+		.get('http://api.giphy.com/v1/gifs/search?api_key=' + tokenFile.giphyApiKey+ '&q=' + args[0]);
+
+	if (body.data.length === 0) {
+		return message.channel.send('Aucun GIF trouvé, sorry dude!')
+	}
 
 	let gifEmbed = new Discord.RichEmbed()
 		.setColor('#FF9900')
 		.setTitle('Gif : ' + args[0])
-		.setImage(body.data.embed_url);
+		.setImage(body.data[Math.trunc(Math.random()*body.data.length)].images.original.url);
 
 	message.channel.send(gifEmbed);
 };
