@@ -3,15 +3,22 @@ const superagent = require('superagent');
 const tokenFile = require('../token.json');
 
 module.exports.run = async (bot, message, args) => {
-
 	if (!args[0] || args[0].length == 0) {
 		return message.channel.send('Il faut préciser un tag!');
 	}
-	let {body} = await superagent
-		.get('http://api.giphy.com/v1/gifs/search?api_key=' + tokenFile.giphyApiKey+ '&q=' + args[0]);
+
+	let {body} = {};
+	await superagent
+		.get('http://api.giphy.com/v1/gifs/search?api_key=' + tokenFile.giphyApiKey+ '&q=' + args[0])
+		.then(gifs => {
+			body = gifs.body;
+		})
+		.catch(err => {
+			return message.channel.send(err.message);
+		});
 
 	if (body.data.length === 0) {
-		return message.channel.send('Aucun GIF trouvé, sorry dude!')
+		return message.channel.send('Aucun GIF trouvé, sorry dude!');
 	}
 
 	let gifEmbed = new Discord.RichEmbed()
