@@ -1,5 +1,6 @@
 const botconfig = require('./botconfig.json');
 const tokenfile = require('./token.json');
+const dataDragon = require('../RiotAPIWrapper/DataDragonAPI/dataDragonAPI');
 const Discord = require('discord.js');
 const fs = require('fs');
 
@@ -25,10 +26,11 @@ process.env['NODE_TLS_REJECT_UNAUTHORIZED'] = 0;
 bot.on('error', console.error);
 
 bot.on('ready', async () => {
-	console.log(`${bot.user.username} is online!`);
+	dataDragon.initByCdn();
 	bot.user.setActivity('Bizkot coding', {
 		type: 'WATCHING'
 	});
+	console.log(`${bot.user.username} is online!`);
 });
 
 bot.on('message', async message => {
