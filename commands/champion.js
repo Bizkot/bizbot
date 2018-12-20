@@ -3,21 +3,25 @@ const dataDragon = require('../../RiotAPIWrapper/DataDragonAPI/dataDragonAPI');
 
 module.exports.run = async (bot, message, args) => {
 	if (!args[0] || args[0].length == 0) {
-		return message.channel.send('Il faut préciser un tag!');
+		return message.channel.send('Il faut préciser un champion!');
 	}
+	const championName = args[0].charAt(0).toUpperCase() + args[0].slice(1);
+
 	let {champion} = {};
-	await dataDragon.getStaticIndividualChampion(args[0])
+	await dataDragon.getStaticIndividualChampion(championName)
 		.then(res => {
-			champion = res.data[args[0]];
+			champion = res.data[championName];
+		})
+		.catch(() => {
+			return message.channel.send(`Le champion ${championName} n'existe pas...`);
 		});
 
-	if (champion.data.length === 0) {
-		return message.channel.send(`Le champion ${args[0]} n'existe pas...`);
-	}
+	const championIcon = dataDragon.getChampionSquareURL(champion.image['full']);
 
 	let championEmbed = new Discord.RichEmbed()
 		.setColor('#FF9900')
 		.setTitle('Champion : ' + champion.name)
+		.setThumbnail(championIcon)
 		.addField('Titre', champion.title)
 		.addField('Histoire', champion.lore);
 
