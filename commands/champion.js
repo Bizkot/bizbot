@@ -13,8 +13,10 @@ module.exports.run = async (bot, message, args) => {
 			champion = res.data[championName];
 		})
 		.catch(() => {
-			return message.channel.send(`Le champion ${championName} n'existe pas...`);
+			message.channel.send(`Le champion ${championName} n'existe pas...`);
 		});
+
+	if (!champion) return;
 
 	const championIcon = dataDragon.getChampionSquareURL(champion.image['full']);
 
@@ -25,7 +27,7 @@ module.exports.run = async (bot, message, args) => {
 		.addField('Titre', champion.title)
 		.addField('Histoire', champion.lore);
 
-	message.channel.send(championEmbed);
+	return message.channel.send(championEmbed);
 
 };
 
