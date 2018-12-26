@@ -10,7 +10,7 @@ module.exports.run = async (kayn, message, args) => {
 	kayn.DDragon.Champion.getDataById(championName)
 		.callback(function(error, res) {
 			if (error) {
-				console.log(error);
+				return message.channel.send(`Le champion ${championName} n'existe pas`);
 			}
 
 			const champion = res.data[championName];
