@@ -1,6 +1,6 @@
 const Discord = require('discord.js');
 const superagent = require('superagent');
-const tokenFile = require('../token.json');
+const tokenFile = require('../../token.json');
 
 module.exports.run = async (bot, message, args) => {
 	if (!args[0] || args[0].length == 0) {

@@ -1,23 +1,53 @@
 const botconfig = require('./botconfig.json');
 const tokenfile = require('./token.json');
-const dataDragon = require('../RiotAPIWrapper/DataDragonAPI/dataDragonAPI');
+
 const Discord = require('discord.js');
+const { Kayn, REGIONS, LRUCache } = require('kayn');
 const fs = require('fs');
 
 const bot = new Discord.Client({
 	disableEveryone: true
 });
-bot.commands = new Discord.Collection();
+bot.lolCommands = new Discord.Collection();
+bot.commonCommands = new Discord.Collection();
 
-fs.readdir('./commands/', (err, files) => {
+const kayn = Kayn(tokenfile.riotApiKey)({
+	region: REGIONS.EUROPE_WEST,
+	locale: 'fr_FR',
+	debugOptions: {
+		isEnabled: true,
+		showKey: false
+	},
+	requestOptions: {},
+	cacheOptions: {
+		cache: new LRUCache({ max: 5000 }),
+		timeToLives: {
+			useDefault: true
+		}
+	}
+});
+
+fs.readdir('./commands/leagueOfLegends', (err, files) => {
 	if (err) {
 		console.log(err);
 	}
 
-	let commandeFiles = files.filter(f => f.split('.').pop() === 'js');
-	commandeFiles.forEach(f => {
-		let props = require(`./commands/${f}`);
-		bot.commands.set(props.help.name, props);
+	let commandFiles = files.filter(f => f.split('.').pop() === 'js');
+	commandFiles.forEach(f => {
+		let props = require(`./commands/leagueOfLegends/${f}`);
+		bot.lolCommands.set(props.help.name, props);
+	});
+});
+
+fs.readdir('./commands/common', (err, files) => {
+	if (err) {
+		console.log(err);
+	}
+
+	let commandFiles = files.filter(f => f.split('.').pop() === 'js');
+	commandFiles.forEach(f => {
+		let props = require(`./commands/common/${f}`);
+		bot.commonCommands.set(props.help.name, props);
 	});
 });
 
@@ -26,27 +56,29 @@ process.env['NODE_TLS_REJECT_UNAUTHORIZED'] = 0;
 bot.on('error', console.error);
 
 bot.on('ready', async () => {
-	dataDragon.initByCdn();
-	bot.user.setActivity('Bizkot coding', {
-		type: 'WATCHING'
-	});
 	console.log(`${bot.user.username} is online!`);
+	console.log(bot.lolCommands);
+	console.log(bot.commonCommands);
 });
 
 bot.on('message', async message => {
-	if (message.author.bot) return;
-	if (message.channel.type === 'dm') return;
+	if (message.author.bot || message.channel.type === 'dm') {
+		return;
+	}
 
 	let prefix = botconfig.prefix;
 	let messageArray = message.content.split(' ');
-	let cmd = messageArray[0];
+	let cmd = messageArray[0].slice(prefix.length);
 	let args = messageArray.slice(1);
+	let commandFile;
 
-	let commandFile = bot.commands.get(cmd.slice(prefix.length));
-	if (commandFile) {
+	if (bot.lolCommands.has(cmd)) {
+		commandFile = bot.lolCommands.get(cmd);
+		commandFile.run(kayn, message, args);
+	} else if (bot.commonCommands.has(cmd)) {
+		commandFile = bot.commonCommands.get(cmd);
 		commandFile.run(bot, message, args);
 	}
-
 });
 
 bot.login(tokenfile.botToken);

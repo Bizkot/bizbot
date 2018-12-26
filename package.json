@@ -10,6 +10,7 @@
   "license": "ISC",
   "dependencies": {
     "discord.js": "^11.4.2",
+    "kayn": "^0.9.1",
     "ms": "^2.1.1",
     "nodemon": "^1.18.8",
     "superagent": "^4.0.0"
