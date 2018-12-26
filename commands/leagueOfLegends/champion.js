@@ -1,5 +1,4 @@
 const Discord = require('discord.js');
-const dataDragon = require('../../../RiotAPIWrapper/DataDragonAPI/dataDragonAPI');
 
 module.exports.run = async (kayn, message, args) => {
 	if (!args[0] || args[0].length == 0) {
@@ -14,7 +13,7 @@ module.exports.run = async (kayn, message, args) => {
 			}
 
 			const champion = res.data[championName];
-			const championIcon = dataDragon.getChampionSquareURL(champion.image['full']);
+			const championIcon = `https://ddragon.leagueoflegends.com/cdn/8.24.1/img/champion/${champion.image.full}`;
 
 			let championEmbed = new Discord.RichEmbed()
 				.setColor('#FF9900')
