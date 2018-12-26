@@ -51,14 +51,10 @@ fs.readdir('./commands/common', (err, files) => {
 	});
 });
 
-process.env['NODE_TLS_REJECT_UNAUTHORIZED'] = 0;
-
 bot.on('error', console.error);
 
 bot.on('ready', async () => {
 	console.log(`${bot.user.username} is online!`);
-	console.log(bot.lolCommands);
-	console.log(bot.commonCommands);
 });
 
 bot.on('message', async message => {
